@@ -1,15 +1,18 @@
 import fastify from 'fastify';
+import cors from '@fastify/cors';
 import {
   hasZodFastifySchemaValidationErrors,
   jsonSchemaTransform,
   serializerCompiler,
-  validatorCompiler
+  validatorCompiler,
 } from 'fastify-type-provider-zod';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUI from '@fastify/swagger-ui';
 import { app } from './src/app';
-import fastifySwagger from "@fastify/swagger";
-import fastifySwaggerUI from "@fastify/swagger-ui";
 
 const server = fastify();
+
+server.register(cors, {});
 
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
@@ -22,14 +25,13 @@ server.register(fastifySwagger, {
     },
     servers: [],
   },
-  transform: jsonSchemaTransform
+  transform: jsonSchemaTransform,
 });
 server.register(fastifySwaggerUI, {
   routePrefix: '/documentation',
 });
 
 server.setErrorHandler((err, req, reply) => {
-  console.log('???', err)
   if (hasZodFastifySchemaValidationErrors(err)) {
     return reply.code(400).send({
       error: 'Response Validation Error',

@@ -15,9 +15,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    working_dir: /data
+    working_dir: /data/build
     volumes:
       - ${PWD}:/data
+      - ${PWD}/build:/data/build
     ports:
       - '8080:8080'
     links:

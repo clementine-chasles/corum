@@ -1,6 +1,12 @@
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import z from 'zod';
 import { FastifyInstance } from 'fastify/types/instance';
+import jwt from 'jsonwebtoken';
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+});
 
 const userSchema = z.object({
   firstName: z.string(),
@@ -11,6 +17,7 @@ const userSchema = z.object({
 const userSchemaIn = z.object({
   ...userSchema.shape,
   dateOfBirth: z.string(),
+  password: z.string(),
 });
 
 const userSchemaOut = z.object({
@@ -25,6 +32,23 @@ export const routes = async (fastify: FastifyInstance) => {
     url: '/health',
     handler: (req, res) => {
       res.send('OK');
+    },
+  });
+  fastify.withTypeProvider<ZodTypeProvider>().route({
+    method: 'POST',
+    url: '/login',
+    schema: {
+      body: loginSchema,
+      response: {
+        200: z.object({
+          jwt: z.string(),
+        }),
+      },
+    },
+    handler: async (req, res) => {
+      const user = await fastify.userRepository.login(req.body);
+      const token = jwt.sign(user, process.env.JWT_SECRET!, { expiresIn: '1h' });
+      res.code(200).send({ jwt: token });
     },
   });
   fastify.withTypeProvider<ZodTypeProvider>().route({
