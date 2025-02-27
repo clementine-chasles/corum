@@ -1,0 +1,26 @@
+---
+version: '3.8'
+name: server
+services:
+  postgres:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - '5432:5432'
+  app:
+    container_name: server.app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /data
+    volumes:
+      - ${PWD}:/data
+    ports:
+      - '8080:8080'
+    links:
+      - postgres:postgres
+    depends_on:
+      - postgres
