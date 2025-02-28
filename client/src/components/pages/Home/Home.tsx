@@ -19,7 +19,7 @@ import { DeleteModal } from '../../molecules/DeleteModal/DeleteModal.tsx';
 
 export const Home = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [currentUser, setCurrentUser] = useState<User>();
+  const [currentUser, setCurrentUser] = useState<User | undefined>();
   const [error, setError] = useState(false);
   const [isPending, startTransition] = useTransition();
   const loadUsers = async () => {
@@ -50,7 +50,7 @@ export const Home = () => {
   };
 
   const handleCloseModal = () => {
-    setCurrentUser(null);
+    setCurrentUser(undefined);
   };
 
   const onDelete = () => {

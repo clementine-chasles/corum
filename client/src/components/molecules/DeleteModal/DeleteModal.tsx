@@ -1,14 +1,21 @@
 import { Alert, Button, Dialog, DialogTitle } from '@mui/material';
 import { useState, useTransition } from 'react';
+import { User } from '../../../types/user.ts';
 
-export const DeleteModal = ({ user, onClose, onDelete }) => {
+interface Props {
+  user?: User;
+  onClose: () => void;
+  onDelete: () => void;
+}
+
+export const DeleteModal = ({ user, onClose, onDelete }: Props) => {
   const [error, setError] = useState(false);
   const [isPending, startTransition] = useTransition();
   const deleteUser = async () => {
     startTransition(async () => {
       setError(false);
       try {
-        const response = await fetch(`/api/users/${user.id}`, {
+        const response = await fetch(`/api/users/${user?.id}`, {
           method: 'DELETE',
         });
         if (response.ok) {

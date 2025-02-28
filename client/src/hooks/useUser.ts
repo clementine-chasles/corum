@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 
 function useUser() {
     const [token, setToken] = useCookies(['jwt'])
-    const decodedToken = jwt.decode(token?.jwt)
+    const decodedToken = jwt.decode(token?.jwt) as { exp: number }
     const logIn = (jwt: string) => {
         setToken('jwt', jwt);
     }

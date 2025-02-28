@@ -7,11 +7,11 @@ import {defineConfig} from "vite";
 export default defineConfig({
   plugins: [tailwindcss(), react(), nodePolyfills()],
   server: {
+    host: true,
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
-        changeOrigin: true,
-        // rewrite: (path) => path.replace(/^\/api/, ''),
+        changeOrigin: true
       },
     },
   },

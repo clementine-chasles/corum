@@ -70,7 +70,7 @@ export const Login = () => {
             variant="outlined"
           />
           {errors.password?.type === 'required' && <ErrorMessage label="This field is required" />}
-          {['minLength', 'maxLength'].includes(errors.password?.type) && (
+          {['minLength', 'maxLength'].includes(errors.password?.type as string) && (
             <ErrorMessage label="The password must be between 8 and 20 characters long" />
           )}
         </div>
