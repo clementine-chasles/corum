@@ -2,6 +2,7 @@ import { useEffect, useState, useTransition } from 'react';
 import {
   Alert,
   CircularProgress,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -11,11 +12,14 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 import { User } from '../../../types/user.ts';
+import { DeleteModal } from '../../molecules/DeleteModal/DeleteModal.tsx';
 
 export const Home = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [currentUser, setCurrentUser] = useState<User>();
   const [error, setError] = useState(false);
   const [isPending, startTransition] = useTransition();
   const loadUsers = async () => {
@@ -40,6 +44,20 @@ export const Home = () => {
   useEffect(() => {
     loadUsers();
   }, []);
+
+  const openDeleteModal = (user: User) => {
+    setCurrentUser(user);
+  };
+
+  const handleCloseModal = () => {
+    setCurrentUser(null);
+  };
+
+  const onDelete = () => {
+    handleCloseModal();
+    loadUsers();
+  };
+
   if (error) {
     return (
       <Alert className="m-8" severity="error">
@@ -78,6 +96,9 @@ export const Home = () => {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
                     <Link to={`/update/${user.id}`}>Update</Link>
+                    <IconButton aria-label="delete" color="error" onClick={() => openDeleteModal(user)}>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -85,6 +106,7 @@ export const Home = () => {
           </Table>
         </TableContainer>
       </div>
+      <DeleteModal user={currentUser} onClose={handleCloseModal} onDelete={onDelete} />
     </div>
   );
 };
