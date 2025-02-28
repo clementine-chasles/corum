@@ -20,7 +20,6 @@ export const Login = () => {
     formState: { errors },
   } = useForm<LoginForm>();
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
-    console.log(data);
     setError(false);
     try {
       const response = await fetch('/api/login', {
