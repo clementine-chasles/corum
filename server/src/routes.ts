@@ -14,9 +14,13 @@ const userSchema = z.object({
   email: z.string(),
 });
 
-const userSchemaIn = z.object({
+const userSchemaPatchIn = z.object({
   ...userSchema.shape,
   dateOfBirth: z.string(),
+});
+
+const userSchemaIn = z.object({
+  ...userSchemaPatchIn.shape,
   password: z.string(),
 });
 
@@ -65,6 +69,20 @@ export const routes = async (fastify: FastifyInstance) => {
     },
   });
   fastify.withTypeProvider<ZodTypeProvider>().route({
+    method: 'GET',
+    url: '/users/:id',
+    schema: {
+      params: z.object({ id: z.string() }),
+      response: {
+        200: userSchemaOut,
+      },
+    },
+    handler: async (req, res) => {
+      const users = await fastify.userRepository.getUserById(req.params.id);
+      res.send(users);
+    },
+  });
+  fastify.withTypeProvider<ZodTypeProvider>().route({
     method: 'POST',
     url: '/users',
     schema: {
@@ -83,7 +101,7 @@ export const routes = async (fastify: FastifyInstance) => {
     url: '/users/:id',
     schema: {
       params: z.object({ id: z.string() }),
-      body: userSchemaIn,
+      body: userSchemaPatchIn,
       response: {
         204: z.undefined(),
       },

@@ -12,7 +12,8 @@ interface UserLogin {
   password: string;
 }
 
-interface UserToCreateOrUpdate extends Omit<UserModel, 'id'> {}
+interface UserToCreate extends Omit<UserModel, 'id'> {}
+interface UserToUpdate extends Omit<UserModel, 'id' | 'password'> {}
 
 interface User extends Omit<UserModel, 'password'> {}
 
@@ -25,7 +26,7 @@ export default class UserRepository {
     return res;
   }
 
-  async createUser(user: UserToCreateOrUpdate): Promise<User> {
+  async createUser(user: UserToCreate): Promise<User> {
     const hashedPassword = await bcrypt.hash(user.password, SALT_ROUNDS);
     const res = await this.drizzle
       .insert(usersTable)
@@ -35,12 +36,17 @@ export default class UserRepository {
     return createdUser;
   }
 
-  async getUser(email: string): Promise<UserModel> {
+  async getUserByEmail(email: string): Promise<UserModel> {
     const res = await this.drizzle.select().from(usersTable).where(eq(usersTable.email, email));
     return res?.[0];
   }
 
-  async updateUser(id: string, user: UserToCreateOrUpdate): Promise<void> {
+  async getUserById(id: string): Promise<UserModel> {
+    const res = await this.drizzle.select().from(usersTable).where(eq(usersTable.id, id));
+    return res?.[0];
+  }
+
+  async updateUser(id: string, user: UserToUpdate): Promise<void> {
     await this.drizzle
       .update(usersTable)
       .set({ ...user })
@@ -52,7 +58,7 @@ export default class UserRepository {
   }
 
   async login(user: UserLogin): Promise<User> {
-    const userInDb = await this.getUser(user.email);
+    const userInDb = await this.getUserByEmail(user.email);
     const passwordsMatch = await bcrypt.compare(user.password, userInDb.password);
     if (!passwordsMatch) {
       throw new Error('Wrong password');

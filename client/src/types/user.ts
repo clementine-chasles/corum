@@ -1,0 +1,14 @@
+export interface User {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+}
+
+export type FullUserForm = {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+};

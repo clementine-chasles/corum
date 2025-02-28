@@ -11,16 +11,11 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
+import { Link } from 'react-router-dom';
+import { User } from '../../../types/user.ts';
 
 export const Home = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState(false);
   const [isPending, startTransition] = useTransition();
   const loadUsers = async () => {
@@ -72,6 +67,7 @@ export const Home = () => {
                 <TableCell>First name</TableCell>
                 <TableCell>Last name</TableCell>
                 <TableCell>Email</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -80,6 +76,9 @@ export const Home = () => {
                   <TableCell>{user.firstName}</TableCell>
                   <TableCell>{user.lastName}</TableCell>
                   <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <Link to={`/update/${user.id}`}>Update</Link>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -2,6 +2,7 @@ import { Route, BrowserRouter as Router, Routes, Navigate } from 'react-router-d
 import { Home } from './components/pages/Home/Home.tsx';
 import { Login } from './components/pages/Login/Login.tsx';
 import { Register } from './components/pages/Register/Register.tsx';
+import { UpdateUser } from './components/pages/UpdateUser/UpdateUser.tsx';
 import useUser from './hooks/useUser.ts';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/update/:id" element={isLoggedIn ? <UpdateUser /> : <Navigate to="/login" />} />
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </Router>
