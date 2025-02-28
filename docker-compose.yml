@@ -1,0 +1,38 @@
+---
+version: '3.8'
+name: client
+services:
+  front:
+    image: 'node:22-slim'
+    command: /bin/bash -c "npm run dev"
+    working_dir: /data
+    volumes:
+      - ${PWD}/client:/data:delegated
+    ports:
+      - '5173:5173'
+    links:
+      - back:back
+    depends_on:
+      - back
+  postgres:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - '5432:5432'
+  back:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    working_dir: /data
+    volumes:
+      - ${PWD}/server:/data
+#      - ${PWD}/server/build:/data/build
+    ports:
+      - '8080:8080'
+    links:
+      - postgres:postgres
+    depends_on:
+      - postgres
