@@ -16,19 +16,26 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 import { User } from '../../../types/user.ts';
 import { DeleteModal } from '../../molecules/DeleteModal/DeleteModal.tsx';
+import useUser from '../../../hooks/useUser.ts';
+import { makeCall } from '../../../utils.ts';
 
 export const Home = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | undefined>();
   const [error, setError] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { token } = useUser();
   const loadUsers = async () => {
     startTransition(async () => {
       setError(false);
       try {
-        const response = await fetch('/api/users', {
-          method: 'GET',
-        });
+        const response = await makeCall(
+          '/api/users',
+          {
+            method: 'GET',
+          },
+          token,
+        );
         if (response.ok) {
           const listOfUsers = await response.json();
           setUsers(listOfUsers);

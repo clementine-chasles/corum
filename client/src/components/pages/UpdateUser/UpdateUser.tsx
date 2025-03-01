@@ -6,6 +6,8 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { UserForm } from '../../organisms/UserForm/UserForm.tsx';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import { makeCall } from '../../../utils.ts';
+import useUser from '../../../hooks/useUser.ts';
 
 export const UpdateUser = () => {
   const { id } = useParams();
@@ -13,6 +15,7 @@ export const UpdateUser = () => {
   const [submitError, setSubmitError] = useState(false);
   const [user, setUser] = useState<User>();
   const [isPending, startTransition] = useTransition();
+  const { token } = useUser();
   const navigate = useNavigate();
   const formProviderMethods = useForm<FullUserForm>({
     defaultValues: useMemo(() => {
@@ -24,9 +27,13 @@ export const UpdateUser = () => {
     startTransition(async () => {
       setError(false);
       try {
-        const response = await fetch(`/api/users/${id}`, {
-          method: 'GET',
-        });
+        const response = await makeCall(
+          `/api/users/${id}`,
+          {
+            method: 'GET',
+          },
+          token,
+        );
         if (response.ok) {
           const userById = await response.json();
           const formattedUser = { ...userById, dateOfBirth: dayjs(userById.dateOfBirth) };
@@ -47,11 +54,14 @@ export const UpdateUser = () => {
   const onSubmit: SubmitHandler<FullUserForm> = async (data) => {
     setSubmitError(false);
     try {
-      const response = await fetch(`/api/users/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await makeCall(
+        `/api/users/${id}`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify(data),
+        },
+        token,
+      );
       if (response.ok) {
         navigate('/home');
       } else {

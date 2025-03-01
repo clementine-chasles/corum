@@ -10,6 +10,7 @@ function useUser() {
     return {
         isLoggedIn: token && Date.now() <= decodedToken?.exp * 1000,
         logIn,
+        token: token?.jwt,
         ...decodedToken
     }
 }

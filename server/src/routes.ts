@@ -58,6 +58,7 @@ export const routes = async (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: 'GET',
     url: '/users',
+    onRequest: [fastify.authenticate],
     schema: {
       response: {
         200: z.array(userSchemaOut),
@@ -71,6 +72,7 @@ export const routes = async (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: 'GET',
     url: '/users/:id',
+    onRequest: [fastify.authenticate],
     schema: {
       params: z.object({ id: z.string() }),
       response: {
@@ -99,6 +101,7 @@ export const routes = async (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: 'PATCH',
     url: '/users/:id',
+    onRequest: [fastify.authenticate],
     schema: {
       params: z.object({ id: z.string() }),
       body: userSchemaPatchIn,
@@ -114,6 +117,7 @@ export const routes = async (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: 'DELETE',
     url: '/users/:id',
+    onRequest: [fastify.authenticate],
     schema: {
       params: z.object({ id: z.string() }),
       response: {

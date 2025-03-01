@@ -1,6 +1,8 @@
 import { Alert, Button, Dialog, DialogTitle } from '@mui/material';
 import { useState, useTransition } from 'react';
 import { User } from '../../../types/user.ts';
+import useUser from '../../../hooks/useUser.ts';
+import { makeCall } from '../../../utils.ts';
 
 interface Props {
   user?: User;
@@ -11,13 +13,18 @@ interface Props {
 export const DeleteModal = ({ user, onClose, onDelete }: Props) => {
   const [error, setError] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { token } = useUser();
   const deleteUser = async () => {
     startTransition(async () => {
       setError(false);
       try {
-        const response = await fetch(`/api/users/${user?.id}`, {
-          method: 'DELETE',
-        });
+        const response = await makeCall(
+          `/api/users/${user?.id}`,
+          {
+            method: 'DELETE',
+          },
+          token,
+        );
         if (response.ok) {
           onDelete();
         } else {
