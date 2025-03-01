@@ -2,6 +2,8 @@
 
 ## Setup
 
+You need to run both setups:
+
 - [Setup client](client/README.md)
 - [Setup server](server/README.md)
 

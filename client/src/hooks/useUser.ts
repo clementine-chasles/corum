@@ -1,5 +1,6 @@
 import {useCookies} from "react-cookie";
 import jwt from 'jsonwebtoken'
+import {useNavigate} from "react-router-dom";
 
 function useUser() {
     const [token, setToken] = useCookies(['jwt'])
@@ -7,9 +8,13 @@ function useUser() {
     const logIn = (jwt: string) => {
         setToken('jwt', jwt);
     }
+    const logOut = () => {
+        setToken('jwt', undefined);
+    }
     return {
         isLoggedIn: token && Date.now() <= decodedToken?.exp * 1000,
         logIn,
+        logOut,
         token: token?.jwt,
         ...decodedToken
     }
