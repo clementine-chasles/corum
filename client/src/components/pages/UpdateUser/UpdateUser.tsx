@@ -1,13 +1,13 @@
 import { useParams } from 'react-router';
 import { useEffect, useMemo, useState, useTransition } from 'react';
-import { FullUserForm, User } from '../../../types/user.ts';
+import { FullUserForm, User } from '../../../types/user';
 import { Alert, Button, CircularProgress } from '@mui/material';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import { UserForm } from '../../organisms/UserForm/UserForm.tsx';
+import { UserForm } from '../../organisms/UserForm/UserForm';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import { makeCall } from '../../../utils.ts';
-import useUser from '../../../hooks/useUser.ts';
+import { makeCall } from '../../../utils';
+import useUser from '../../../hooks/useUser';
 
 export const UpdateUser = () => {
   const { id } = useParams();
@@ -18,6 +18,7 @@ export const UpdateUser = () => {
   const { token } = useUser();
   const navigate = useNavigate();
   const formProviderMethods = useForm<FullUserForm>({
+    mode: 'onChange',
     defaultValues: useMemo(() => {
       return user;
     }, [user]),
@@ -87,7 +88,11 @@ export const UpdateUser = () => {
   }
   return (
     <FormProvider {...formProviderMethods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex items-center justify-center h-full">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        data-testid="update-user-form"
+        className="flex items-center justify-center h-full"
+      >
         <div className="w-90">
           <UserForm hidePassword />
           <Button type="submit" variant="outlined">

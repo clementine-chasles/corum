@@ -2,15 +2,15 @@ import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { Alert, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import useUser from '../../../hooks/useUser.ts';
-import { UserForm } from '../../organisms/UserForm/UserForm.tsx';
-import { FullUserForm } from '../../../types/user.ts';
+import useUser from '../../../hooks/useUser';
+import { UserForm } from '../../organisms/UserForm/UserForm';
+import { FullUserForm } from '../../../types/user';
 
 export const Register = () => {
   const navigate = useNavigate();
   const { logIn } = useUser();
   const [error, setError] = useState(false);
-  const formProviderMethods = useForm<FullUserForm>();
+  const formProviderMethods = useForm<FullUserForm>({ mode: 'onChange' });
   const { handleSubmit } = formProviderMethods;
   const onSubmit: SubmitHandler<FullUserForm> = async (data) => {
     setError(false);
@@ -43,7 +43,11 @@ export const Register = () => {
 
   return (
     <FormProvider {...formProviderMethods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex items-center justify-center h-full">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        data-testid="register-form"
+        className="flex items-center justify-center h-full"
+      >
         <div className="w-90">
           <UserForm />
           <Button type="submit" variant="outlined">

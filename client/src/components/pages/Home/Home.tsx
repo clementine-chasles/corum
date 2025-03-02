@@ -14,10 +14,10 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
-import { User } from '../../../types/user.ts';
-import { DeleteModal } from '../../molecules/DeleteModal/DeleteModal.tsx';
-import useUser from '../../../hooks/useUser.ts';
-import { makeCall } from '../../../utils.ts';
+import { User } from '../../../types/user';
+import { DeleteModal } from '../../molecules/DeleteModal/DeleteModal';
+import useUser from '../../../hooks/useUser';
+import { makeCall } from '../../../utils';
 
 export const Home = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -74,7 +74,7 @@ export const Home = () => {
   }
   if (isPending) {
     return (
-      <div className="flex justify-center items-center mt-8">
+      <div data-testid="spinner" className="flex justify-center items-center mt-8">
         <CircularProgress />
       </div>
     );
@@ -97,7 +97,11 @@ export const Home = () => {
             </TableHead>
             <TableBody>
               {users.map((user: User) => (
-                <TableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableRow
+                  key={user.id}
+                  data-testid={`row-${user.id}`}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
                   <TableCell>{user.firstName}</TableCell>
                   <TableCell>{user.lastName}</TableCell>
                   <TableCell>{user.email}</TableCell>

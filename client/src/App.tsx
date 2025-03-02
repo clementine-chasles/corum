@@ -1,10 +1,10 @@
 import { Route, BrowserRouter as Router, Routes, Navigate } from 'react-router-dom';
-import { Home } from './components/pages/Home/Home.tsx';
-import { Login } from './components/pages/Login/Login.tsx';
+import { Home } from './components/pages/Home/Home';
+import { Login } from './components/pages/Login/Login';
 import { Link } from 'react-router-dom';
-import { Register } from './components/pages/Register/Register.tsx';
-import { UpdateUser } from './components/pages/UpdateUser/UpdateUser.tsx';
-import useUser from './hooks/useUser.ts';
+import { Register } from './components/pages/Register/Register';
+import { UpdateUser } from './components/pages/UpdateUser/UpdateUser';
+import useUser from './hooks/useUser';
 import { AppBar, IconButton, Toolbar, Typography } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useState } from 'react';
@@ -14,7 +14,7 @@ import Menu from '@mui/material/Menu';
 function App() {
   const { isLoggedIn, logOut } = useUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const handleMenu = (event: MouseEvent) => {
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {

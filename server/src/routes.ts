@@ -77,11 +77,16 @@ export const routes = async (fastify: FastifyInstance) => {
       params: z.object({ id: z.string() }),
       response: {
         200: userSchemaOut,
+        404: z.undefined(),
       },
     },
     handler: async (req, res) => {
-      const users = await fastify.userRepository.getUserById(req.params.id);
-      res.send(users);
+      const user = await fastify.userRepository.getUserById(req.params.id);
+      if (user) {
+        res.send(user);
+      } else {
+        res.code(404).send(undefined);
+      }
     },
   });
   fastify.withTypeProvider<ZodTypeProvider>().route({
@@ -111,7 +116,7 @@ export const routes = async (fastify: FastifyInstance) => {
     },
     handler: async (req, res) => {
       await fastify.userRepository.updateUser(req.params.id, req.body);
-      res.send({});
+      res.code(204).send();
     },
   });
   fastify.withTypeProvider<ZodTypeProvider>().route({
@@ -126,7 +131,7 @@ export const routes = async (fastify: FastifyInstance) => {
     },
     handler: async (req, res) => {
       await fastify.userRepository.deleteUser(req.params.id);
-      res.send({});
+      res.code(204).send(undefined);
     },
   });
 };

@@ -1,7 +1,7 @@
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
-import {defineConfig} from "vite";
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,8 +11,8 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://back:8080',
-        changeOrigin: true
+        changeOrigin: true,
       },
     },
   },
-})
+});

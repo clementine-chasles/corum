@@ -1,5 +1,5 @@
 import { TextField } from '@mui/material';
-import { ErrorMessage } from '../../atoms/ErrorMessage/ErrorMessage.tsx';
+import { ErrorMessage } from '../../atoms/ErrorMessage/ErrorMessage';
 import { Controller, useFormContext } from 'react-hook-form';
 import { DatePicker } from '@mui/x-date-pickers';
 
@@ -11,7 +11,7 @@ export const UserForm = ({ hidePassword = false }) => {
   } = useFormContext();
   return (
     <>
-      <div className="mb-4!">
+      <div className="mb-4!" data-testid="email">
         <TextField
           className="w-full"
           {...register('email', {
@@ -30,7 +30,7 @@ export const UserForm = ({ hidePassword = false }) => {
         {errors.email?.type === 'pattern' && <ErrorMessage label="This field must be a valid email" />}
       </div>
       {!hidePassword && (
-        <div className="mb-4!">
+        <div className="mb-4!" data-testid="password">
           <TextField
             className="w-full"
             {...register('password', { required: true, minLength: 8, maxLength: 20 })}
@@ -45,7 +45,7 @@ export const UserForm = ({ hidePassword = false }) => {
           )}
         </div>
       )}
-      <div className="mb-4!">
+      <div className="mb-4!" data-testid="firstName">
         <TextField
           className="w-full"
           {...register('firstName', { required: true })}
@@ -55,7 +55,7 @@ export const UserForm = ({ hidePassword = false }) => {
         />
         {errors.firstName?.type === 'required' && <ErrorMessage label="This field is required" />}
       </div>
-      <div className="mb-4!">
+      <div className="mb-4!" data-testid="lastName">
         <TextField
           className="w-full"
           {...register('lastName', { required: true })}
@@ -65,7 +65,7 @@ export const UserForm = ({ hidePassword = false }) => {
         />
         {errors.lastName?.type === 'required' && <ErrorMessage label="This field is required" />}
       </div>
-      <div className="mb-4!">
+      <div className="mb-4!" data-testid="dateOfBirth">
         <Controller
           control={control}
           name="dateOfBirth"
@@ -73,7 +73,7 @@ export const UserForm = ({ hidePassword = false }) => {
             required: true,
           }}
           render={({ field: { onChange, value } }) => (
-            <DatePicker className="w-full" onChange={onChange} value={value} />
+            <DatePicker label="Date of birth" className="w-full" value={value} timezone="UTC" onChange={onChange} />
           )}
         />
         {errors.dateOfBirth?.type === 'required' && <ErrorMessage label="This field is required" />}

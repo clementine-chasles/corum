@@ -1,9 +1,9 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Alert, Button, TextField } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import { ErrorMessage } from '../../atoms/ErrorMessage/ErrorMessage.tsx';
+import { ErrorMessage } from '../../atoms/ErrorMessage/ErrorMessage';
 import { useState } from 'react';
-import useUser from '../../../hooks/useUser.ts';
+import useUser from '../../../hooks/useUser';
 
 type LoginForm = {
   email: string;
@@ -18,7 +18,7 @@ export const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>();
+  } = useForm<LoginForm>({ mode: 'onChange' });
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
     setError(false);
     try {

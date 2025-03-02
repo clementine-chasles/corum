@@ -1,8 +1,8 @@
 import { Alert, Button, Dialog, DialogTitle } from '@mui/material';
 import { useState, useTransition } from 'react';
-import { User } from '../../../types/user.ts';
-import useUser from '../../../hooks/useUser.ts';
-import { makeCall } from '../../../utils.ts';
+import { User } from '../../../types/user';
+import useUser from '../../../hooks/useUser';
+import { makeCall } from '../../../utils';
 
 interface Props {
   user?: User;
@@ -37,7 +37,7 @@ export const DeleteModal = ({ user, onClose, onDelete }: Props) => {
   };
   return (
     <Dialog onClose={onClose} open={Boolean(user)}>
-      <div className="p-8">
+      <div className="p-8" data-testid="delete-user-modal">
         <DialogTitle>Are you sure you want to delete this user?</DialogTitle>
         <div>
           <span className="font-bold">Email:</span> {user?.email}
