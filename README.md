@@ -1,4 +1,4 @@
-# Corum
+# Corum users
 
 ## Setup
 

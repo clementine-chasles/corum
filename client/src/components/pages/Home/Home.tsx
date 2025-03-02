@@ -107,7 +107,12 @@ export const Home = () => {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
                     <Link to={`/update/${user.id}`}>Update</Link>
-                    <IconButton aria-label="delete" color="error" onClick={() => openDeleteModal(user)}>
+                    <IconButton
+                      aria-label="delete"
+                      data-testid="delete-button"
+                      color="error"
+                      onClick={() => openDeleteModal(user)}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
