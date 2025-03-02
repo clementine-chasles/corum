@@ -16,7 +16,7 @@
     "format": "prettier --write '{.,{src,tests}/**}/*.{js,json,ts}' --list-different",
     "test-unit": "jest tests/unit",
     "test-func": "DOTENV_CONFIG_PATH=./.env.test jest tests/functional --runInBand",
-    "test-coverage": "jest --coverage --runInBand --detectOpenHandles --forceExit --silent"
+    "test-coverage": "DOTENV_CONFIG_PATH=./.env.test jest --coverage --runInBand --detectOpenHandles --forceExit --silent"
   },
   "author": "",
   "license": "ISC",

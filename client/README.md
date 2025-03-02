@@ -26,10 +26,13 @@ npm run test # will run unit/integration tests
 Pre-requisites:
 
 ```
+# follow the setup from the server folder
 # from root folder
 docker compose up
 # from server folder
 npm run db-clear
+# from client folder
+npx playwright install
 ```
 
 To run the tests:
