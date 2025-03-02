@@ -1,0 +1,90 @@
+name: CI
+on: [push]
+jobs:
+  client-test-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+      - name: Setup and run tests
+        working-directory: ./client
+        run: |
+          npm i
+          npm run test-coverage
+  client-test-func:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+      - name: Setup client
+        working-directory: ./client
+        run: |
+          npm i
+          npx playwright install
+      - name: Setup server
+        working-directory: ./server
+        run: |
+          npm i
+          npm run build
+      - name: Run front and back
+        run: docker compose up --detach
+      - name: DB migrate
+        working-directory: ./server
+        run: npm run db-migrate
+      - name: Run e2e tests
+        working-directory: ./client
+        run: npm run test-func
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright report
+          path: |
+            playwright-report
+  client-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+      - name: Audit
+        working-directory: ./client
+        run: |
+          npm i
+          npm audit --production
+  server-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+      - name: Setup
+        working-directory: ./server
+        run: |
+          npm i
+          npm run build
+      - name: Run front and back
+        run: docker compose up --detach
+      - name: DB migrate and run tests
+        working-directory: ./server
+        run: |
+          npm run db-migrate
+          npm run test-coverage
+  server-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+      - name: Server audit
+        working-directory: ./server
+        run: |
+          npm i
+          npm audit --production

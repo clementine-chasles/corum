@@ -11,6 +11,7 @@ export default {
         '@components/(.*)$': '<rootDir>/src/components/$1',
         '@/(.*)$': '<rootDir>/src/$1',
     },
+    modulePathIgnorePatterns: ["<rootDir>/tests/"],
     "automock": false,
     "resetMocks": false,
     testEnvironment: 'jsdom',
