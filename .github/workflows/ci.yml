@@ -88,3 +88,29 @@ jobs:
         run: |
           npm i
           npm audit --production
+  client-format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+      - name: Client format check
+        working-directory: ./client
+        run: |
+          npm i
+          npm run format-check
+          npm run lint
+  server-format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+      - name: Server format check
+        working-directory: ./server
+        run: |
+          npm i
+          npm run format-check
+          npm run lint
