@@ -1,7 +1,8 @@
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import bcrypt from 'bcrypt';
 
-import { eq } from 'drizzle-orm';
+import { asc, desc, eq, like, or } from 'drizzle-orm';
+import { PgColumn } from 'drizzle-orm/pg-core';
 import { UserModel } from '../model/User';
 import { usersTable } from '../db/schema';
 
@@ -16,12 +17,35 @@ interface UserToCreate extends Omit<UserModel, 'id'> {}
 interface UserToUpdate extends Omit<UserModel, 'id' | 'password'> {}
 
 interface User extends Omit<UserModel, 'password'> {}
+interface GetUsersProps {
+  search?: string;
+  orderBy?: string;
+  order?: string;
+}
 
 export default class UserRepository {
   constructor(private drizzle: NodePgDatabase) {}
 
-  async getUsers(): Promise<UserModel[]> {
-    const res = await this.drizzle.select().from(usersTable);
+  async getUsers(props?: GetUsersProps): Promise<UserModel[]> {
+    const { search, order, orderBy } = props || {};
+    const likeQuery = `%${search}%`;
+    const sortFunction = order === 'desc' ? desc : asc;
+    const sortAttribute: PgColumn = orderBy
+      ? (usersTable[orderBy as keyof typeof usersTable] as PgColumn)
+      : usersTable.email;
+    const res = await this.drizzle
+      .select()
+      .from(usersTable)
+      .where(
+        or(
+          ...[
+            ...(search ? [like(usersTable.email, likeQuery)] : []),
+            ...(search ? [like(usersTable.firstName, likeQuery)] : []),
+            ...(search ? [like(usersTable.lastName, likeQuery)] : []),
+          ],
+        ),
+      )
+      .orderBy(sortFunction(sortAttribute));
     if (res.length === 0) return [];
     return res;
   }

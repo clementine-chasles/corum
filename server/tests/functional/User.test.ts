@@ -55,12 +55,51 @@ describe('GET `/api/users` routes', () => {
       .send({
         email: 'other@test.com',
         password: null,
-        firstName: 'John',
-        lastName: 'Doe',
+        firstName: 'Elinor',
+        lastName: 'Dashwood',
         dateOfBirth: '2020-01-01T00:00:00.000Z',
       })
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8');
+  });
+
+  it('should filter by name', async () => {
+    const response = await supertest(fastify.server)
+      .get('/api/users?search=wood')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8');
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          email: 'other@test.com',
+          firstName: 'Elinor',
+          lastName: 'Dashwood',
+        }),
+      ]),
+    );
+  });
+
+  it('should sort by email', async () => {
+    const response = await supertest(fastify.server)
+      .get('/api/users?order=asc&orderBy=email')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8');
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          email: 'test@test.com',
+          firstName: 'John',
+          lastName: 'Doe',
+        }),
+        expect.objectContaining({
+          email: 'other@test.com',
+          firstName: 'Elinor',
+          lastName: 'Dashwood',
+        }),
+      ]),
+    );
   });
 
   it('should reject login if credentials are wrong', async () => {

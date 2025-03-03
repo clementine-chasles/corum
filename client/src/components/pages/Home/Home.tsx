@@ -8,7 +8,6 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Typography,
 } from '@mui/material';
@@ -18,19 +17,37 @@ import { User } from '../../../types/user';
 import { DeleteModal } from '../../molecules/DeleteModal/DeleteModal';
 import useUser from '../../../hooks/useUser';
 import { makeCall } from '../../../utils';
+import { SearchBar } from '../../molecules/SearchBar/SearchBar';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import { EnhancedTableHead, Order } from './Table.utils';
+
+type SearchForm = {
+  search?: string;
+};
+
+type LoadUserProps = {
+  search?: string;
+  orderBy: string;
+  order: Order;
+};
 
 export const Home = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | undefined>();
   const [error, setError] = useState(false);
+  const [order, setOrder] = useState<Order>('asc');
+  const [orderBy, setOrderBy] = useState<string>('email');
   const [isPending, startTransition] = useTransition();
+  const formProviderMethods = useForm();
+  const search = formProviderMethods.watch('search');
   const { token } = useUser();
-  const loadUsers = async () => {
+  const loadUsers = async (props?: LoadUserProps) => {
+    const { search, order, orderBy } = props || {};
     startTransition(async () => {
       setError(false);
       try {
         const response = await makeCall(
-          '/api/users',
+          `/api/users?order=${order}&orderBy=${orderBy}${search ? `&search=${search}` : ''}`,
           {
             method: 'GET',
           },
@@ -49,7 +66,7 @@ export const Home = () => {
   };
 
   useEffect(() => {
-    loadUsers();
+    loadUsers({ order, orderBy, search });
   }, []);
 
   const openDeleteModal = (user: User) => {
@@ -62,7 +79,15 @@ export const Home = () => {
 
   const onDelete = () => {
     handleCloseModal();
-    loadUsers();
+    loadUsers({ order, orderBy, search });
+  };
+
+  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: string) => {
+    const isAsc = orderBy === property && order === 'asc';
+    const newOrder = isAsc ? 'desc' : 'asc';
+    setOrder(newOrder);
+    setOrderBy(property);
+    loadUsers({ order: newOrder, orderBy: property, search });
   };
 
   if (error) {
@@ -79,6 +104,10 @@ export const Home = () => {
       </div>
     );
   }
+
+  const onSubmit: SubmitHandler<SearchForm> = async (data) => {
+    await loadUsers({ order, orderBy, search: data.search });
+  };
   return (
     <div className="flex items-start justify-start p-8">
       <div className="w-full">
@@ -88,16 +117,14 @@ export const Home = () => {
         <div className="flex justify-end my-2">
           <Link to="/add">Add user</Link>
         </div>
+        <FormProvider {...formProviderMethods}>
+          <form onSubmit={formProviderMethods.handleSubmit(onSubmit)} data-testid="search-bar">
+            <SearchBar />
+          </form>
+        </FormProvider>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>First name</TableCell>
-                <TableCell>Last name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
+          <Table sx={{ minWidth: 650 }} size="small">
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
             <TableBody>
               {users.map((user: User) => (
                 <TableRow

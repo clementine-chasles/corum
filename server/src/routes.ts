@@ -60,12 +60,17 @@ export const routes = async (fastify: FastifyInstance) => {
     url: '/users',
     onRequest: [fastify.authenticate],
     schema: {
+      querystring: z.object({
+        search: z.string().optional(),
+        order: z.string().optional(),
+        orderBy: z.string().optional(),
+      }),
       response: {
         200: z.array(userSchemaOut),
       },
     },
     handler: async (req, res) => {
-      const users = await fastify.userRepository.getUsers();
+      const users = await fastify.userRepository.getUsers(req.query);
       res.send(users);
     },
   });

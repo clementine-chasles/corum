@@ -72,4 +72,16 @@ describe('Home', () => {
       expect(fetchMock).toHaveBeenCalledWith('/api/users/id1', { method: 'DELETE', headers: expect.anything() }),
     );
   });
+  it('should sort by first name', async () => {
+    fetchMock.mockResponse(JSON.stringify([user, { ...user, id: 'id2', firstName: 'Jane' }]));
+    renderHome();
+    await waitFor(() => expect(within(screen.getByTestId('row-id1')).getByText('John')).toBeVisible());
+    fireEvent.click(screen.getByText('First name'));
+    await waitFor(() =>
+      expect(fetchMock).toHaveBeenCalledWith('/api/users?order=asc&orderBy=firstName', {
+        method: 'GET',
+        headers: expect.anything(),
+      }),
+    );
+  });
 });
