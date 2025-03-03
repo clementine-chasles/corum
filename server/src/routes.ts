@@ -21,7 +21,7 @@ const userSchemaPatchIn = z.object({
 
 const userSchemaIn = z.object({
   ...userSchemaPatchIn.shape,
-  password: z.string(),
+  password: z.string().nullable(),
 });
 
 const userSchemaOut = z.object({

@@ -1,4 +1,4 @@
-import { NodePgDatabase , drizzle } from 'drizzle-orm/node-postgres';
+import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import { UserModel } from '../../../src/model/User';
@@ -23,7 +23,8 @@ const userToCreate = {
 };
 
 describe('UsersRepository', () => {
-  let repo: UserRepository; let db: NodePgDatabase;
+  let repo: UserRepository;
+  let db: NodePgDatabase;
   beforeEach(() => {
     db = drizzle('');
     repo = new UserRepository(db);
@@ -126,7 +127,7 @@ describe('UsersRepository', () => {
   describe('login', () => {
     it('should accept login and return user without the password', async () => {
       const select = jest.spyOn(db, 'select');
-      const hashPassword = await bcrypt.hash(user.password, 10);
+      const hashPassword = await bcrypt.hash('12345678', 10);
       const where = jest.fn().mockReturnValue([{ ...user, password: hashPassword }]);
       // @ts-ignore
       select.mockReturnValue({
@@ -140,7 +141,7 @@ describe('UsersRepository', () => {
     });
     it('should reject login with wrong credentials', async () => {
       const select = jest.spyOn(db, 'select');
-      const hashPassword = await bcrypt.hash(user.password, 10);
+      const hashPassword = await bcrypt.hash('12345678', 10);
       const where = jest.fn().mockReturnValue([{ ...user, password: hashPassword }]);
       // @ts-ignore
       select.mockReturnValue({
@@ -148,7 +149,7 @@ describe('UsersRepository', () => {
           where,
         }),
       });
-      await expect(repo.login({ email: 'test@test.com', password: '123' })).rejects.toThrow('Wrong password');
+      await expect(repo.login({ email: 'test@test.com', password: '123' })).rejects.toThrow('Wrong credentials');
     });
   });
 });
