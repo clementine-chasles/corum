@@ -140,7 +140,7 @@ export const Home = () => {
                     <IconButton
                       aria-label="delete"
                       data-testid="delete-button"
-                      color="error"
+                      color="secondary"
                       onClick={() => openDeleteModal(user)}
                     >
                       <DeleteIcon />

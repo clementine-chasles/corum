@@ -19,8 +19,8 @@ server.setSerializerCompiler(serializerCompiler);
 server.register(fastifySwagger, {
   openapi: {
     info: {
-      title: 'SampleApi',
-      description: 'Sample backend service',
+      title: 'CorumUsersAPI',
+      description: 'Corum users API',
       version: '1.0.0',
     },
     servers: [],
