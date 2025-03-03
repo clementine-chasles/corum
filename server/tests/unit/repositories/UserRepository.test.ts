@@ -1,5 +1,5 @@
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
-import { eq, like, or } from 'drizzle-orm';
+import { desc, eq, like, or } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import { UserModel } from '../../../src/model/User';
 import { usersTable } from '../../../src/db/schema';
@@ -32,7 +32,7 @@ describe('UsersRepository', () => {
   describe('getUsers', () => {
     it('should return empty array if no users are found', async () => {
       const select = jest.spyOn(db, 'select');
-      const where = jest.fn().mockReturnValue([]);
+      const where = jest.fn().mockReturnValue({ orderBy: jest.fn().mockReturnValue([]) });
       // @ts-ignore
       select.mockReturnValue({
         from: jest.fn().mockReturnValue({
@@ -44,7 +44,7 @@ describe('UsersRepository', () => {
     });
     it('should return users', async () => {
       const select = jest.spyOn(db, 'select');
-      const where = jest.fn().mockReturnValue([user]);
+      const where = jest.fn().mockReturnValue({ orderBy: jest.fn().mockReturnValue([user]) });
       // @ts-ignore
       select.mockReturnValue({
         from: jest.fn().mockReturnValue({
@@ -56,14 +56,14 @@ describe('UsersRepository', () => {
     });
     it('should filter by search', async () => {
       const select = jest.spyOn(db, 'select');
-      const where = jest.fn().mockReturnValue([user]);
+      const where = jest.fn().mockReturnValue({ orderBy: jest.fn().mockReturnValue([user]) });
       // @ts-ignore
       select.mockReturnValue({
         from: jest.fn().mockReturnValue({
           where,
         }),
       });
-      const users = await repo.getUsers('search');
+      const users = await repo.getUsers({ search: 'search' });
       expect(users).toEqual([user]);
       expect(where).toHaveBeenCalledWith(
         or(
@@ -72,6 +72,27 @@ describe('UsersRepository', () => {
           like(usersTable.lastName, '%search%'),
         ),
       );
+    });
+    it('should sort', async () => {
+      const select = jest.spyOn(db, 'select');
+      const orderBy = jest.fn().mockReturnValue([user]);
+      const where = jest.fn().mockReturnValue({ orderBy });
+      // @ts-ignore
+      select.mockReturnValue({
+        from: jest.fn().mockReturnValue({
+          where,
+        }),
+      });
+      const users = await repo.getUsers({ search: 'search', order: 'desc', orderBy: 'firstName' });
+      expect(users).toEqual([user]);
+      expect(where).toHaveBeenCalledWith(
+        or(
+          like(usersTable.email, '%search%'),
+          like(usersTable.firstName, '%search%'),
+          like(usersTable.lastName, '%search%'),
+        ),
+      );
+      expect(orderBy).toHaveBeenCalledWith(desc(usersTable.firstName));
     });
   });
   describe('createUser', () => {

@@ -7,6 +7,7 @@ export const SearchBar = () => {
     <div className="mb-4! flex">
       <TextField
         className="w-full"
+        size="small"
         {...register('search')}
         type="text"
         label="Search"

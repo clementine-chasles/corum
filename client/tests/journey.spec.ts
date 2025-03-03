@@ -33,6 +33,19 @@ test('user journey', async ({ page }) => {
   await expect(page.locator('tbody tr')).toHaveCount(2)
   await expect(page.getByText('Elinor')).toBeVisible();
   await expect(page.getByText('Dashwood')).toBeVisible();
+  // sort & filter
+  await expect(page.locator('tbody tr').first().getByText('Elinor')).toBeVisible();
+  await page.getByText('First name').click();
+  await expect(page.locator('tbody tr').first().getByText('Elinor')).toBeVisible();
+  await page.getByText('First name').click();
+  await expect(page.locator('tbody tr').first().getByText('John')).toBeVisible();
+  await page.getByPlaceholder('Search').fill('Doe')
+  await page.getByRole('button', { name: 'Search' }).click();
+  await expect(page.locator('tbody tr')).toHaveCount(1)
+  await expect(page.locator('tbody tr').first().getByText('John')).toBeVisible();
+  await page.getByPlaceholder('Search').clear()
+  await page.getByRole('button', { name: 'Search' }).click();
+  await expect(page.locator('tbody tr')).toHaveCount(2)
   // update user
   await page.getByText('Update').first().click()
   await page.getByLabel('Last name').fill('Smith')

@@ -80,6 +80,28 @@ describe('GET `/api/users` routes', () => {
     );
   });
 
+  it('should sort by email', async () => {
+    const response = await supertest(fastify.server)
+      .get('/api/users?order=asc&orderBy=email')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8');
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          email: 'test@test.com',
+          firstName: 'John',
+          lastName: 'Doe',
+        }),
+        expect.objectContaining({
+          email: 'other@test.com',
+          firstName: 'Elinor',
+          lastName: 'Dashwood',
+        }),
+      ]),
+    );
+  });
+
   it('should reject login if credentials are wrong', async () => {
     await supertest(fastify.server)
       .post('/api/login')
