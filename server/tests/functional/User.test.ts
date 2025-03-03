@@ -49,6 +49,20 @@ describe('GET `/api/users` routes', () => {
     userId = response.body.id;
   });
 
+  it('should create user without any login', async () => {
+    await supertest(fastify.server)
+      .post('/api/users')
+      .send({
+        email: 'other@test.com',
+        password: null,
+        firstName: 'John',
+        lastName: 'Doe',
+        dateOfBirth: '2020-01-01T00:00:00.000Z',
+      })
+      .expect(200)
+      .expect('Content-Type', 'application/json; charset=utf-8');
+  });
+
   it('should reject login if credentials are wrong', async () => {
     await supertest(fastify.server)
       .post('/api/login')

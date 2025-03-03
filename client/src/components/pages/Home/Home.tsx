@@ -85,6 +85,9 @@ export const Home = () => {
         <Typography variant="h3" gutterBottom>
           Users
         </Typography>
+        <div className="flex justify-end my-2">
+          <Link to="/add">Add user</Link>
+        </div>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>

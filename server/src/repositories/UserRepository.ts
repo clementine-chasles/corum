@@ -27,7 +27,7 @@ export default class UserRepository {
   }
 
   async createUser(user: UserToCreate): Promise<User> {
-    const hashedPassword = await bcrypt.hash(user.password, SALT_ROUNDS);
+    const hashedPassword = user.password ? await bcrypt.hash(user.password, SALT_ROUNDS) : undefined;
     const res = await this.drizzle
       .insert(usersTable)
       .values({ ...user, password: hashedPassword })
@@ -59,9 +59,12 @@ export default class UserRepository {
 
   async login(user: UserLogin): Promise<User> {
     const userInDb = await this.getUserByEmail(user.email);
+    if (!user.password || !userInDb.password) {
+      throw new Error('Wrong credentials');
+    }
     const passwordsMatch = await bcrypt.compare(user.password, userInDb.password);
     if (!passwordsMatch) {
-      throw new Error('Wrong password');
+      throw new Error('Wrong credentials');
     }
     const { password: _pwd, ...userWithoutPassword } = userInDb;
     return userWithoutPassword;

@@ -3,6 +3,7 @@ import { Home } from './components/pages/Home/Home';
 import { Login } from './components/pages/Login/Login';
 import { Link } from 'react-router-dom';
 import { Register } from './components/pages/Register/Register';
+import { AddUser } from './components/pages/AddUser/AddUser';
 import { UpdateUser } from './components/pages/UpdateUser/UpdateUser';
 import useUser from './hooks/useUser';
 import { AppBar, IconButton, Toolbar, Typography } from '@mui/material';
@@ -72,6 +73,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/add" element={<AddUser />} />
         <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
         <Route path="/update/:id" element={isLoggedIn ? <UpdateUser /> : <Navigate to="/login" />} />
         <Route path="*" element={<Navigate to="/home" />} />

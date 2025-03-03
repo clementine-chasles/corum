@@ -20,22 +20,35 @@ test('user journey', async ({ page }) => {
   await expect(page.getByText('Doe')).toBeVisible();
   await expect(page.getByText('Update')).toBeVisible();
   await expect(page.getByTestId('delete-button')).toBeVisible();
+  // add user
+  await expect(page.getByText('Add user')).toBeVisible();
+  await page.getByText('Add user').click()
+  await expect(page).toHaveURL('http://localhost:5173/add')
+  await page.getByLabel('Email').fill('test2@test.com')
+  await page.getByLabel('First name').fill('Elinor')
+  await page.getByLabel('Last name').fill('Dashwood')
+  await page.getByLabel('Date of birth').fill('02/02/2020')
+  await page.getByText('Add user').click();
+  await expect(page).toHaveURL('http://localhost:5173/home')
+  await expect(page.locator('tbody tr')).toHaveCount(2)
+  await expect(page.getByText('Elinor')).toBeVisible();
+  await expect(page.getByText('Dashwood')).toBeVisible();
   // update user
-  await page.getByText('Update').click()
+  await page.getByText('Update').first().click()
   await page.getByLabel('Last name').fill('Smith')
   await page.getByText('Update').click()
   await expect(page).toHaveURL('http://localhost:5173/home')
   await expect(page.getByText('Smith')).toBeVisible();
   // delete user
-  await page.getByTestId('delete-button').click()
+  await page.getByTestId('delete-button').first().click()
   await expect(page.getByText('Are you sure you want to delete this user?')).toBeVisible();
-  await expect(page.getByTestId('delete-user-modal').getByText('test@test.com')).toBeVisible();
-  await expect(page.getByTestId('delete-user-modal').getByText('John Smith')).toBeVisible();
+  await expect(page.getByTestId('delete-user-modal').getByText('test2@test.com')).toBeVisible();
+  await expect(page.getByTestId('delete-user-modal').getByText('Elinor Dashwood')).toBeVisible();
   await page.getByText('Yes, confirm').click()
   await expect(page).toHaveURL('http://localhost:5173/home')
   await expect(page.getByTestId('delete-user-modal')).toBeHidden();
-  await expect(page.getByText('Smith')).toBeHidden();
-  await expect(page.locator('tbody tr')).toBeHidden();
+  await expect(page.getByText('Dashwood')).toBeHidden();
+  await expect(page.locator('tbody tr')).toHaveCount(1);
   // logout
   await page.getByTestId('AccountCircleIcon').click()
   await page.getByText('Logout').click()
