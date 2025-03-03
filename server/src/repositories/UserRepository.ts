@@ -1,7 +1,7 @@
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import bcrypt from 'bcrypt';
 
-import { eq } from 'drizzle-orm';
+import { eq, like, or } from 'drizzle-orm';
 import { UserModel } from '../model/User';
 import { usersTable } from '../db/schema';
 
@@ -20,8 +20,20 @@ interface User extends Omit<UserModel, 'password'> {}
 export default class UserRepository {
   constructor(private drizzle: NodePgDatabase) {}
 
-  async getUsers(): Promise<UserModel[]> {
-    const res = await this.drizzle.select().from(usersTable);
+  async getUsers(search?: string): Promise<UserModel[]> {
+    const likeQuery = `%${search}%`;
+    const res = await this.drizzle
+      .select()
+      .from(usersTable)
+      .where(
+        or(
+          ...[
+            ...(search ? [like(usersTable.email, likeQuery)] : []),
+            ...(search ? [like(usersTable.firstName, likeQuery)] : []),
+            ...(search ? [like(usersTable.lastName, likeQuery)] : []),
+          ],
+        ),
+      );
     if (res.length === 0) return [];
     return res;
   }
