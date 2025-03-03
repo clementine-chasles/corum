@@ -11,7 +11,7 @@ const loginSchema = z.object({
 const userSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
-  email: z.string(),
+  email: z.string().email(),
 });
 
 const userSchemaPatchIn = z.object({
