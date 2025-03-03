@@ -18,19 +18,26 @@ import { User } from '../../../types/user';
 import { DeleteModal } from '../../molecules/DeleteModal/DeleteModal';
 import useUser from '../../../hooks/useUser';
 import { makeCall } from '../../../utils';
+import { SearchBar } from '../../molecules/SearchBar/SearchBar';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+
+type SearchForm = {
+  search?: string;
+};
 
 export const Home = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | undefined>();
   const [error, setError] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const formProviderMethods = useForm();
   const { token } = useUser();
-  const loadUsers = async () => {
+  const loadUsers = async (search?: string) => {
     startTransition(async () => {
       setError(false);
       try {
         const response = await makeCall(
-          '/api/users',
+          `/api/users${search ? `?search=${search}` : ''}`,
           {
             method: 'GET',
           },
@@ -79,6 +86,10 @@ export const Home = () => {
       </div>
     );
   }
+
+  const onSubmit: SubmitHandler<SearchForm> = async (data) => {
+    await loadUsers(data.search);
+  };
   return (
     <div className="flex items-start justify-start p-8">
       <div className="w-full">
@@ -88,6 +99,11 @@ export const Home = () => {
         <div className="flex justify-end my-2">
           <Link to="/add">Add user</Link>
         </div>
+        <FormProvider {...formProviderMethods}>
+          <form onSubmit={formProviderMethods.handleSubmit(onSubmit)} data-testid="search-bar">
+            <SearchBar />
+          </form>
+        </FormProvider>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>

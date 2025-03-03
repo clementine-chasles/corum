@@ -1,5 +1,5 @@
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
-import { eq } from 'drizzle-orm';
+import { eq, like, or } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import { UserModel } from '../../../src/model/User';
 import { usersTable } from '../../../src/db/schema';
@@ -32,21 +32,46 @@ describe('UsersRepository', () => {
   describe('getUsers', () => {
     it('should return empty array if no users are found', async () => {
       const select = jest.spyOn(db, 'select');
+      const where = jest.fn().mockReturnValue([]);
       // @ts-ignore
       select.mockReturnValue({
-        from: jest.fn().mockReturnValue([]),
+        from: jest.fn().mockReturnValue({
+          where,
+        }),
       });
       const users = await repo.getUsers();
       expect(users).toEqual([]);
     });
     it('should return users', async () => {
       const select = jest.spyOn(db, 'select');
+      const where = jest.fn().mockReturnValue([user]);
       // @ts-ignore
       select.mockReturnValue({
-        from: jest.fn().mockReturnValue([user]),
+        from: jest.fn().mockReturnValue({
+          where,
+        }),
       });
       const users = await repo.getUsers();
       expect(users).toEqual([user]);
+    });
+    it('should filter by search', async () => {
+      const select = jest.spyOn(db, 'select');
+      const where = jest.fn().mockReturnValue([user]);
+      // @ts-ignore
+      select.mockReturnValue({
+        from: jest.fn().mockReturnValue({
+          where,
+        }),
+      });
+      const users = await repo.getUsers('search');
+      expect(users).toEqual([user]);
+      expect(where).toHaveBeenCalledWith(
+        or(
+          like(usersTable.email, '%search%'),
+          like(usersTable.firstName, '%search%'),
+          like(usersTable.lastName, '%search%'),
+        ),
+      );
     });
   });
   describe('createUser', () => {
