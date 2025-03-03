@@ -73,7 +73,14 @@ export const UserForm = ({ hidePassword = false }) => {
             required: true,
           }}
           render={({ field: { onChange, value } }) => (
-            <DatePicker label="Date of birth" className="w-full" value={value} timezone="UTC" onChange={onChange} />
+            <DatePicker
+              disableFuture
+              label="Date of birth"
+              className="w-full"
+              value={value}
+              timezone="UTC"
+              onChange={onChange}
+            />
           )}
         />
         {errors.dateOfBirth?.type === 'required' && <ErrorMessage label="This field is required" />}
