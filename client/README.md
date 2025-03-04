@@ -13,6 +13,12 @@ This folder handles the webapp for Corum users. It's based on:
 npm i
 ```
 
+## Start
+
+```
+npm run dev
+```
+
 ## Tests
 
 ### Unit/integration tests
@@ -26,7 +32,7 @@ npm run test # will run unit/integration tests
 Pre-requisites:
 
 ```
-# follow the setup from the server folder
+# follow the install from the server folder
 # from root folder
 docker compose up
 # from server folder
