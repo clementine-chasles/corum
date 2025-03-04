@@ -14,15 +14,22 @@ This folder handle the API for Corum users. It's based on:
 npm i
 ```
 
-## Build
+## Start
 
 ```
-npm run build
+npm run dev
 ```
 
 ## Swagger
 
 Available at: http://localhost:8080/documentation
+
+## Database
+
+Database is postgres and we use drizzle ORM to handle queries and migration scripts. So when you want to modify the DB schema, you change the schema file: `src/db/schema.ts`.
+You then have to run:
+- `npm run db-generate` which will generate migration scripts in the drizzle folder
+- `npm run db-migrate` to actually do the migration in the DB
 
 ## Tests
 
@@ -36,7 +43,7 @@ npm run test-unit
 
 ### E2E tests
 
-To run the unit tests:
+To run the e2e tests:
 
 ```
 npm run test-func

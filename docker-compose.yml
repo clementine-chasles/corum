@@ -23,9 +23,8 @@ services:
     ports:
       - '5432:5432'
   back:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: 'node:22-slim'
+    command: /bin/bash -c "npm run dev"
     working_dir: /data
     volumes:
       - ${PWD}/server:/data
